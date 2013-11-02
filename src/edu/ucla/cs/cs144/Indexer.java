@@ -83,8 +83,6 @@ public class Indexer {
 
 		// Process each result
 		while (rs.next()) {
-
-			System.out.println("Processing item: " + name);
 		
 			// Reset the concatenated 'categories' string
 			categories = "";
@@ -120,14 +118,14 @@ public class Indexer {
 			Document doc = new Document();
 		
 			// Add fields to the document
-			/*doc.add(new FloatField("id", id, Field.Store.YES));
-			doc.add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("description", description, Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new FloatField("buyPrice", buyPrice, Field.Store.YES));
-			doc.add(new Field("ends", ends.toString(), Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("content", content, Field.Store.YES, Field.Index.ANALYZED));*/
+			doc.add(new Field("id", String.valueOf(id), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("name", name, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("description", description, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("buyPrice", String.valueOf(buyPrice), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("ends", ends.toString(), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("content", content, Field.Store.YES, Field.Index.TOKENIZED));
 		
 		
 			// Write the document
