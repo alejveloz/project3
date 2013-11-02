@@ -1,5 +1,6 @@
 package edu.ucla.cs.cs144;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,9 +24,7 @@ public class Indexer {
     
     public IndexWriter getIndexWriter(boolean create) throws IOException {
         if (indexWriter == null) {
-            indexWriter = new IndexWriter(System.getenv("LUCENE_INDEX") + "/index1",
-                                          new StandardAnalyzer(),
-                                          create);
+            indexWriter = new IndexWriter(System.getenv("LUCENE_INDEX") + "/index1", new StandardAnalyzer(), true);
         }
         return indexWriter;
    } 
@@ -36,7 +35,7 @@ public class Indexer {
         }
    }
  
-    public void rebuildIndexes() {
+    public void rebuildIndexes() throws SQLException, IOException {
 
     	//
     	// Open the database connection
@@ -69,15 +68,15 @@ public class Indexer {
     	float price;
 	
     	float id;
-		String name;
-		String description;
+		String name = "";
+		String description = "";
 		float buyPrice;
 		Date ends;
 	
-		String seller;
-		String categories;
+		String seller = "";
+		String categories = "";
 	
-		String content;
+		String content = "";
 
 		// Execute the query
 		ResultSet rs = stmt.executeQuery("SELECT id, name, description, buy_price, ends FROM Item");
@@ -121,14 +120,14 @@ public class Indexer {
 			Document doc = new Document();
 		
 			// Add fields to the document
-			doc.add(new Field("id", id, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("name", name, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("description", description, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("buyPrice", buyPrice, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("ends", ends, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("content", content, Field.Store.YES, Field.Index.TOKENIZED));
+			/*doc.add(new FloatField("id", id, Field.Store.YES));
+			doc.add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("description", description, Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new FloatField("buyPrice", buyPrice, Field.Store.YES));
+			doc.add(new Field("ends", ends.toString(), Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("content", content, Field.Store.YES, Field.Index.ANALYZED));*/
 		
 		
 			// Write the document
@@ -154,7 +153,7 @@ public class Indexer {
 		}
     }    
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws SQLException, IOException {
         Indexer idx = new Indexer();
         idx.rebuildIndexes();
     }   
