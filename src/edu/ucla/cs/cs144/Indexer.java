@@ -109,23 +109,24 @@ public class Indexer {
 			categoryRs = subStmt.executeQuery("SELECT category FROM ItemCategory WHERE iid = " + id);
 			while(categoryRs.next())
 			{
-				categories += categoryRs.getString("category");
+				categories += " " + categoryRs.getString("category");
 			}
 		
-			content = name + categories + description;
+			content = name + " " + categories + " " + description;
 		
 			// Create a document for this item
 			Document doc = new Document();
 		
 			// Add fields to the document
+			// Note: Only store if we need to display the value or use it for future db look up
 			doc.add(new Field("id", String.valueOf(id), Field.Store.YES, Field.Index.TOKENIZED));
 			doc.add(new Field("name", name, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("description", description, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("buyPrice", String.valueOf(buyPrice), Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("ends", ends.toString(), Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.add(new Field("content", content, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.add(new Field("description", description, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("buyPrice", String.valueOf(buyPrice), Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("ends", ends.toString(), Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("categories", categories, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("seller", seller, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("content", content, Field.Store.NO, Field.Index.TOKENIZED));
 		
 		
 			// Write the document
