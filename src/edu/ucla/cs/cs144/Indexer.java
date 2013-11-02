@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Document;
@@ -48,9 +49,88 @@ public class Indexer {
          * and place your class source files at src/edu/ucla/cs/cs144/.
 	 * 
 	 */
+	
+	// Create the index
+	IndexWriter indexWriter = new IndexWriter("index-directory", new StandardAnalyzer(), true);
 
+	// Create a statement for our queries
+	Statement stmt = conn.createStatement();
+	
+	// Create variables for our index creation
+	String bar, beer;
+	float price;
+	
+	float id;
+	String name;
+	String description;
+	float buyPrice;
+	Date ends;
+	
+	String seller;
+	String categories;
+	
+	String content;
 
-        // close the database connection
+	// Execute the query
+	ResultSet rs = stmt.executeQuery("SELECT id, name, description, buy_price, ends FROM Item");
+
+	// Process each result
+	while (rs.next()) {
+
+		// Reset the concatenated 'categories' string
+		categories = "";
+		
+		// Set up sub statement and result set variables
+		Statement subStmt = conn.createStatement();
+		ResultSet sellerRs, categoryRs;
+		
+		// Grab the ID for use in sub queries and other fields
+		id = rs.getFloat("id");
+		name = rs.getString("name");
+		description = rs.getString("description");
+		buyPrice = rs.getFloat("buy_price");
+		ends = rs.getDate("ends");
+		
+		// For each item, the seller
+		sellerRs = subStmt.executeQuery("SELECT uid FROM ItemSeller WHERE iid = " + id);
+		while(sellerRs.next())
+		{
+			seller = sellerRs.getString("uid");
+		}
+		
+		// For each item, we need all the categories
+		categoryRs = subStmt.executeQuery("SELECT category FROM ItemCategory WHERE iid = " + id);
+		while(categoryRs.next())
+		{
+			categories += categoryRs.getString("category");
+		}
+		
+		content = name + categories + description;
+		
+		//item name, category, seller, buy price, bidder, ending time, and description, content
+		
+		// Create a document for this item
+		Document doc = new Document();
+		
+		// Add fields to the document
+		doc.add(new Field("id", id, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("name", name, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("description", description, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("buyPrice", buyPrice, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("ends", ends, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("categories", categories, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("seller", seller, Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Field("content", content, Field.Store.YES, Field.Index.TOKENIZED));
+		
+		
+		// Write the document
+		indexWriter.addDocument(doc);
+	}
+	
+	// Close the index
+	indexWriter.close();
+
+    // close the database connection
 	try {
 	    conn.close();
 	} catch (SQLException ex) {
