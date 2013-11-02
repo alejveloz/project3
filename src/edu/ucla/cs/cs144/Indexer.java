@@ -119,13 +119,14 @@ public class Indexer {
 		
 			// Add fields to the document
 			// Note: Only store if we need to display the value or use it for future db look up
-			doc.add(new Field("id", String.valueOf(id), Field.Store.YES, Field.Index.TOKENIZED));
+			// Note: Only tokenize when needed.
+			doc.add(new Field("id", String.valueOf(id), Field.Store.YES, Field.Index.NO));
 			doc.add(new Field("name", name, Field.Store.YES, Field.Index.TOKENIZED));
 			doc.add(new Field("description", description, Field.Store.NO, Field.Index.TOKENIZED));
 			doc.add(new Field("buyPrice", String.valueOf(buyPrice), Field.Store.NO, Field.Index.TOKENIZED));
 			doc.add(new Field("ends", ends.toString(), Field.Store.NO, Field.Index.TOKENIZED));
 			doc.add(new Field("categories", categories, Field.Store.NO, Field.Index.TOKENIZED));
-			doc.add(new Field("seller", seller, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.add(new Field("seller", seller, Field.Store.NO, Field.Index.UN_TOKENIZED));
 			doc.add(new Field("content", content, Field.Store.NO, Field.Index.TOKENIZED));
 		
 		
