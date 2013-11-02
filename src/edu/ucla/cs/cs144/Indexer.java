@@ -64,9 +64,6 @@ public class Indexer {
     	Statement stmt = conn.createStatement();
 	
     	// Create variables for our index creation
-    	String bar, beer;
-    	float price;
-	
     	float id;
 		String name = "";
 		String description = "";
