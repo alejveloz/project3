@@ -64,7 +64,7 @@ public class Indexer {
     	Statement stmt = conn.createStatement();
 	
     	// Create variables for our index creation
-    	float id;
+    	int id;
 		String name = "";
 		String description = "";
 		float buyPrice;
@@ -89,7 +89,7 @@ public class Indexer {
 			ResultSet sellerRs, categoryRs;
 		
 			// Grab the ID for use in sub queries and other fields
-			id = rs.getFloat("id");
+			id = rs.getInt("id");
 			name = rs.getString("name");
 			description = rs.getString("description");
 			buyPrice = rs.getFloat("buy_price");
